@@ -6,12 +6,21 @@ import { updateTask, getTasks } from './storage';
 // Check if running on native platform
 const isNative = Capacitor.isNativePlatform();
 
-// Initialize notifications - request permission
+// Initialize notifications - request all permissions
 export const initializeNotifications = async (): Promise<void> => {
   if (isNative) {
     try {
+      // Request notification permission
       const permission = await LocalNotifications.requestPermissions();
       console.log('Notification permission:', permission.display);
+      
+      // Check exact alarm permission (Android 12+)
+      try {
+        const exactAlarm = await LocalNotifications.checkPermissions();
+        console.log('Exact alarm permission:', exactAlarm);
+      } catch (e) {
+        console.log('Exact alarm check not available');
+      }
       
       // Set up notification listeners
       LocalNotifications.addListener('localNotificationReceived', (notification) => {
@@ -20,7 +29,13 @@ export const initializeNotifications = async (): Promise<void> => {
       
       LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
         console.log('Notification action:', notification);
+        // Handle notification tap - could navigate to task
       });
+      
+      // Log pending notifications for debugging
+      const pending = await LocalNotifications.getPending();
+      console.log('Pending notifications:', pending.notifications.length);
+      
     } catch (error) {
       console.log('Notification init error:', error);
     }
@@ -59,11 +74,15 @@ export const scheduleTaskNotification = async (task: Task): Promise<void> => {
           id: hashCode(`${task.id}-5min`),
           title: '⏰ Tasker Reminder',
           body: `${emoji} ${task.title} - Starting in 5 minutes!`,
-          schedule: { at: fiveMinBefore },
+          schedule: { 
+            at: fiveMinBefore,
+            allowWhileIdle: true  // Important: works in Doze mode
+          },
           sound: 'default',
-          smallIcon: 'ic_notification',
+          smallIcon: 'ic_stat_icon_config_sample',
           largeIcon: 'ic_launcher',
           channelId: 'tasker-reminders',
+          autoCancel: true,
           extra: { taskId: task.id, type: '5min' }
         });
       }
@@ -73,11 +92,15 @@ export const scheduleTaskNotification = async (task: Task): Promise<void> => {
         id: hashCode(`${task.id}-ontime`),
         title: '🚨 Tasker Alert',
         body: `${emoji} ${task.title} - Time is NOW!`,
-        schedule: { at: taskDateTime },
+        schedule: { 
+          at: taskDateTime,
+          allowWhileIdle: true  // Important: works in Doze mode
+        },
         sound: 'default',
-        smallIcon: 'ic_notification',
+        smallIcon: 'ic_stat_icon_config_sample',
         largeIcon: 'ic_launcher',
         channelId: 'tasker-alerts',
+        autoCancel: true,
         extra: { taskId: task.id, type: 'ontime' }
       });
       
