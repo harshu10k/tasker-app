@@ -29,12 +29,12 @@ jobs:
       uses: android-actions/setup-android@v3
       
     - name: Install dependencies
-      run: npm ci
+      run: npm install
       
     - name: Build web app
       run: npm run build
       env:
-        CAPACITOR_BUILD: true
+        CAPACITOR_BUILD: 'true'
       
     - name: Sync Capacitor
       run: npx cap sync android
