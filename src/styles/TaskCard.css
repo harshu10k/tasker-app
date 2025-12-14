@@ -1,0 +1,506 @@
+.task-card {
+  background: linear-gradient(160deg, rgba(28, 28, 35, 0.9) 0%, rgba(22, 22, 28, 0.95) 50%, rgba(18, 18, 22, 0.98) 100%);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  border: 1px solid rgba(138, 43, 226, 0.15);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(138, 43, 226, 0.03);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.task-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(192, 192, 192, 0.1), rgba(138, 43, 226, 0.2), rgba(192, 192, 192, 0.1), transparent);
+}
+
+.task-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.08), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+/* Selected state */
+.task-card.selected {
+  border-color: rgba(138, 43, 226, 0.6);
+  background: linear-gradient(160deg, rgba(138, 43, 226, 0.15) 0%, rgba(100, 20, 180, 0.1) 50%, rgba(22, 22, 28, 0.95) 100%);
+  box-shadow: 
+    0 0 0 2px rgba(138, 43, 226, 0.3),
+    0 8px 30px rgba(138, 43, 226, 0.2),
+    0 0 50px rgba(138, 43, 226, 0.1);
+}
+
+.task-select-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.task-select-btn:hover {
+  background: rgba(138, 43, 226, 0.2);
+}
+
+.task-select-btn .selected-icon {
+  color: #a855f7;
+}
+
+.task-select-btn .unselected-icon {
+  color: #666;
+}
+
+.task-card:hover {
+  border-color: rgba(138, 43, 226, 0.35);
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 0 60px rgba(138, 43, 226, 0.1);
+  transform: translateY(-4px) scale(1.01);
+}
+
+.task-card:hover::after {
+  left: 100%;
+}
+
+.task-card.completed {
+  opacity: 0.6;
+  background: linear-gradient(160deg, rgba(22, 22, 28, 0.85) 0%, rgba(18, 18, 22, 0.9) 100%);
+}
+
+.task-main {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  align-items: flex-start;
+}
+
+.task-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-checkbox-btn {
+  background: linear-gradient(145deg, rgba(138, 43, 226, 0.15) 0%, rgba(75, 0, 130, 0.2) 100%);
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 14px;
+  flex-shrink: 0;
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 4px 16px rgba(138, 43, 226, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.task-checkbox-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%);
+  border-radius: 14px 14px 0 0;
+  pointer-events: none;
+}
+
+.task-checkbox-btn:hover {
+  color: #e0e0e0;
+  background: linear-gradient(145deg, rgba(138, 43, 226, 0.35) 0%, rgba(75, 0, 130, 0.4) 100%);
+  transform: scale(1.1);
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 8px 24px rgba(138, 43, 226, 0.4),
+    0 0 40px rgba(138, 43, 226, 0.15);
+}
+
+.checked-icon {
+  color: #4ade80;
+}
+
+.unchecked-icon {
+  color: #888;
+}
+
+.completed-title {
+  text-decoration: line-through;
+  color: #666;
+}
+
+.task-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.task-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #e0e0e0;
+  flex: 1;
+  word-break: break-word;
+}
+
+.task-card.completed .task-header h3 {
+  color: #666;
+}
+
+.text-line-through {
+  text-decoration: line-through;
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.task-description {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #aaa;
+  word-break: break-word;
+}
+
+.task-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #888;
+}
+
+.task-time {
+  font-weight: 500;
+}
+
+.task-relative-time {
+  color: #666;
+}
+
+/* Action Buttons Container */
+.task-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+}
+
+.task-edit-btn {
+  background: linear-gradient(145deg, rgba(138, 43, 226, 0.15) 0%, rgba(99, 102, 241, 0.2) 100%);
+  border: none;
+  color: #8b5cf6;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 4px 12px rgba(138, 43, 226, 0.15);
+}
+
+.task-edit-btn:hover {
+  color: white;
+  background: linear-gradient(145deg, rgba(138, 43, 226, 0.9) 0%, rgba(99, 102, 241, 0.95) 100%);
+  transform: scale(1.1);
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 8px 24px rgba(138, 43, 226, 0.4);
+}
+
+.task-delete-btn {
+  background: linear-gradient(145deg, rgba(255, 71, 87, 0.1) 0%, rgba(220, 38, 38, 0.15) 100%);
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  border-radius: 12px;
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 4px 12px rgba(255, 71, 87, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.task-delete-btn:hover {
+  color: white;
+  background: linear-gradient(145deg, rgba(255, 71, 87, 0.9) 0%, rgba(220, 38, 38, 0.95) 100%);
+  transform: scale(1.1);
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 8px 24px rgba(255, 71, 87, 0.4);
+}
+
+.task-priority {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 10px;
+  color: #000;
+}
+
+.attachments-section {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(60, 60, 60, 0.4);
+  border-radius: 8px;
+}
+
+.attachments-section h4 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: #c0c0c0;
+}
+
+.attachments-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.attachment-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(70, 70, 70, 0.6);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.attachment-name {
+  color: #e0e0e0;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachment-size {
+  color: #888;
+  font-size: 10px;
+}
+
+.download-btn {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  transition: all 0.2s;
+}
+
+.download-btn:hover {
+  color: #764ba2;
+  transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+  .task-card {
+    padding: 16px;
+    margin-bottom: 14px;
+    border-radius: 20px;
+    gap: 12px;
+    background: linear-gradient(160deg, rgba(22, 22, 30, 0.95) 0%, rgba(16, 16, 22, 0.98) 100%);
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    box-shadow: 
+      0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 0 50px rgba(138, 43, 226, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .task-card:active {
+    transform: scale(0.98);
+  }
+
+  .task-main {
+    gap: 12px;
+  }
+
+  .task-checkbox-btn {
+    padding: 14px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(138, 43, 226, 0.2) 0%, rgba(100, 50, 180, 0.25) 100%);
+    box-shadow: 
+      0 0 0 1px rgba(138, 43, 226, 0.3) inset,
+      0 4px 16px rgba(138, 43, 226, 0.25);
+  }
+
+  .task-checkbox-btn:active {
+    transform: scale(0.9);
+  }
+
+  .task-header {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .task-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .task-header {
+    flex-wrap: nowrap;
+    padding-right: 50px;
+  }
+
+  .category-badge {
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .task-description {
+    font-size: 13px;
+    margin: 8px 0;
+    line-height: 1.5;
+    color: #999;
+  }
+
+  .task-meta {
+    gap: 6px;
+    font-size: 11px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(138, 43, 226, 0.1);
+  }
+
+  .task-date, .task-time {
+    padding: 5px 8px;
+    background: rgba(138, 43, 226, 0.1);
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 11px;
+  }
+
+  .task-priority {
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+  .task-relative-time {
+    font-size: 10px;
+    color: #666;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .task-action-buttons {
+    flex-direction: row;
+    gap: 6px;
+    top: 12px;
+    right: 12px;
+  }
+
+  .task-edit-btn {
+    padding: 10px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, rgba(40, 40, 50, 0.95) 0%, rgba(30, 30, 40, 0.98) 100%);
+    border: 1px solid rgba(138, 43, 226, 0.3);
+  }
+
+  .task-edit-btn:active {
+    transform: scale(0.9);
+  }
+
+  .task-delete-btn {
+    padding: 10px;
+    border-radius: 10px;
+    position: relative;
+    top: auto;
+    right: auto;
+    background: linear-gradient(145deg, rgba(40, 40, 50, 0.95) 0%, rgba(30, 30, 40, 0.98) 100%);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+  }
+
+  .task-delete-btn:active {
+    transform: scale(0.9);
+  }
+
+  .attachments-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(138, 43, 226, 0.15);
+  }
+
+  .attachments-section h4 {
+    font-size: 12px;
+  }
+
+  .attachment-card {
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+}
