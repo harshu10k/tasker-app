@@ -404,8 +404,9 @@
   }
 
   .task-header {
-    flex-wrap: nowrap;
-    padding-right: 50px;
+    flex-wrap: wrap;
+    padding-right: 85px;
+    gap: 8px;
   }
 
   .category-badge {
@@ -414,9 +415,10 @@
     border-radius: 16px;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    max-width: 80px;
+    max-width: 70px;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
   }
 
   .task-description {
