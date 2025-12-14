@@ -259,49 +259,87 @@
   box-shadow: 0 6px 30px rgba(138, 43, 226, 0.5);
 }
 
-/* Mobile Responsive */
+/* Mobile Responsive - Full Screen Modal */
 @media (max-width: 500px) {
   .edit-modal-overlay {
-    padding: 10px;
-    align-items: flex-end;
+    padding: 0;
+    align-items: stretch;
   }
 
   .edit-modal {
-    max-height: 85vh;
-    border-radius: 24px 24px 0 0;
+    max-height: 100vh;
+    height: 100vh;
+    max-width: 100%;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .edit-modal-header {
-    padding: 16px 20px;
+    padding: 20px;
+    position: sticky;
+    top: 0;
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+    z-index: 10;
   }
 
   .edit-modal-header h2 {
-    font-size: 18px;
+    font-size: 22px;
+  }
+
+  .close-btn {
+    padding: 12px;
+    border-radius: 14px;
   }
 
   .edit-form {
-    padding: 20px;
-    gap: 16px;
+    padding: 24px;
+    gap: 20px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .form-group label {
+    font-size: 14px;
+    margin-bottom: 4px;
   }
 
   .form-input,
   .form-textarea,
   .form-select {
-    padding: 12px 14px;
-    font-size: 14px;
+    padding: 16px 18px;
+    font-size: 16px;
+    border-radius: 14px;
+  }
+
+  .form-textarea {
+    min-height: 100px;
   }
 
   .form-row {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
 
   .form-actions {
     flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(0deg, #16213e 0%, rgba(22, 33, 62, 0.95) 100%);
+    margin: 0 -24px -24px -24px;
+    border-top: 1px solid rgba(138, 43, 226, 0.2);
   }
 
   .cancel-btn,
   .save-btn {
-    padding: 16px;
+    padding: 18px;
+    font-size: 16px;
+    border-radius: 14px;
+  }
+
+  .save-btn {
+    order: -1;
   }
 }

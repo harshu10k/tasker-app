@@ -28,8 +28,10 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, categories, onTaskUpd
           return matchesSearch && task.dueDate === today && !task.completed;
         case 'high':
           return matchesSearch && task.priority === 'high' && !task.completed;
+        case 'all':
         default:
-          return matchesSearch;
+          // All Tasks shows only pending (not completed) tasks
+          return matchesSearch && !task.completed;
       }
     });
 

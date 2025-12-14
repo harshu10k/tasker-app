@@ -172,6 +172,7 @@
   gap: 12px;
   margin-bottom: 8px;
   flex-wrap: wrap;
+  padding-right: 90px;
 }
 
 .task-header h3 {
