@@ -1,54 +1,136 @@
-// Tasker Service Worker for Background Notifications
-const CACHE_NAME = 'tasker-v1';
-const TASKS_KEY = 'tasker_tasks';
+// Tasker Service Worker - PWA Ready
+const CACHE_NAME = 'tasker-cache-v2';
 
-// Install event
+// Files to cache for offline support
+const urlsToCache = [
+  '/tasker-app/',
+  '/tasker-app/index.html',
+  '/tasker-app/manifest.json',
+  '/tasker-app/logo-192.png',
+  '/tasker-app/logo-512.png'
+];
+
+// Install event - cache files
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installed');
+  console.log('Service Worker: Installing...');
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('Service Worker: Caching files');
+        return cache.addAll(urlsToCache);
+      })
+      .catch((err) => console.log('Cache error:', err))
+  );
   self.skipWaiting();
 });
 
-// Activate event
+// Activate event - clean old caches
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker activated');
-  event.waitUntil(self.clients.claim());
-  // Start checking for notifications
+  console.log('Service Worker: Activated');
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            console.log('Service Worker: Clearing old cache');
+            return caches.delete(cache);
+          }
+        })
+      );
+    })
+  );
+  self.clients.claim();
   startNotificationChecker();
 });
 
-// Start periodic notification check
-function startNotificationChecker() {
-  // Check every 30 seconds
-  setInterval(() => {
-    checkAndNotify();
-  }, 30000);
+// Fetch event - serve from cache, fallback to network
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) => {
+        return response || fetch(event.request)
+          .then((fetchResponse) => {
+            if (event.request.method === 'GET') {
+              const responseClone = fetchResponse.clone();
+              caches.open(CACHE_NAME)
+                .then((cache) => {
+                  cache.put(event.request, responseClone);
+                });
+            }
+            return fetchResponse;
+          });
+      })
+      .catch(() => {
+        if (event.request.destination === 'document') {
+          return caches.match('/tasker-app/index.html');
+        }
+      })
+  );
+});
+
+// Push notification event
+self.addEventListener('push', (event) => {
+  const data = event.data ? event.data.json() : {};
+  const title = data.title || 'Tasker Reminder';
+  const options = {
+    body: data.body || 'You have a task reminder!',
+    icon: '/tasker-app/logo-192.png',
+    badge: '/tasker-app/logo-192.png',
+    vibrate: [200, 100, 200],
+    data: data
+  };
   
-  // Also check immediately
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+
+// Notification click event
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes('tasker-app') && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow('/tasker-app/');
+      }
+    })
+  );
+});
+
+// Background sync
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'check-tasks') {
+    event.waitUntil(checkAndNotify());
+  }
+});
+
+// Periodic notification checker
+function startNotificationChecker() {
+  setInterval(() => checkAndNotify(), 30000);
   checkAndNotify();
 }
 
-// Get tasks from localStorage via client
-async function getTasks() {
-  const clients = await self.clients.matchAll();
-  if (clients.length > 0) {
-    // Try to get from client
-    return new Promise((resolve) => {
+// Check for notifications
+async function checkAndNotify() {
+  try {
+    const allClients = await self.clients.matchAll();
+    if (allClients.length === 0) return;
+    
+    const tasks = await new Promise((resolve) => {
       const messageChannel = new MessageChannel();
       messageChannel.port1.onmessage = (event) => {
         resolve(event.data.tasks || []);
       };
-      clients[0].postMessage({ type: 'GET_TASKS' }, [messageChannel.port2]);
-      // Timeout after 1 second
+      allClients[0].postMessage({ type: 'GET_TASKS' }, [messageChannel.port2]);
       setTimeout(() => resolve([]), 1000);
     });
-  }
-  return [];
-}
-
-// Check tasks and send notifications
-async function checkAndNotify() {
-  try {
-    const tasks = await getTasks();
+    
     const now = new Date();
     
     tasks.forEach(task => {
@@ -56,18 +138,15 @@ async function checkAndNotify() {
         const taskDateTime = new Date(`${task.dueDate}T${task.dueTime}`);
         if (isNaN(taskDateTime.getTime())) return;
         
-        const timeDiff = taskDateTime.getTime() - now.getTime();
-        const minutesBefore = timeDiff / (60 * 1000);
+        const minutesBefore = (taskDateTime.getTime() - now.getTime()) / 60000;
         
-        // 5 minutes before notification
         if (!task.notified5min && minutesBefore > 3 && minutesBefore <= 6) {
-          showNotification(task, '5min');
+          showTaskNotification(task, '5min');
           notifyClient(task.id, 'notified5min');
         }
         
-        // Exact time notification
         if (!task.notifiedOnTime && minutesBefore > -2 && minutesBefore <= 1) {
-          showNotification(task, 'ontime');
+          showTaskNotification(task, 'ontime');
           notifyClient(task.id, 'notifiedOnTime');
         }
       }
@@ -78,77 +157,34 @@ async function checkAndNotify() {
 }
 
 // Show notification
-function showNotification(task, type) {
-  const priorityEmoji = {
-    'high': '🔴',
-    'medium': '🟡', 
-    'low': '🟢'
-  };
-  
-  let title, body, tag;
-  
-  if (type === '5min') {
-    title = '⏰ Tasker Reminder';
-    body = `${priorityEmoji[task.priority]} ${task.title} - Starting in 5 minutes!`;
-    tag = `${task.id}-5min`;
-  } else {
-    title = '🚨 Tasker Alert';
-    body = `${priorityEmoji[task.priority]} ${task.title} - Time is NOW!`;
-    tag = `${task.id}-ontime`;
-  }
+function showTaskNotification(task, type) {
+  const emoji = { 'high': '🔴', 'medium': '🟡', 'low': '🟢' };
+  const title = type === '5min' ? '⏰ Tasker Reminder' : '🚨 Tasker Alert';
+  const body = type === '5min' 
+    ? `${emoji[task.priority] || '📝'} ${task.title} - Starting in 5 minutes!`
+    : `${emoji[task.priority] || '📝'} ${task.title} - Time is NOW!`;
   
   self.registration.showNotification(title, {
-    body: body,
-    icon: '/tasker-app/applogo.jpeg',
-    badge: '/tasker-app/applogo.jpeg',
-    tag: tag,
+    body, 
+    icon: '/tasker-app/logo-192.png',
+    badge: '/tasker-app/logo-192.png',
+    tag: `${task.id}-${type}`,
     requireInteraction: type === 'ontime',
-    vibrate: [200, 100, 200],
-    actions: [
-      { action: 'open', title: 'Open App' },
-      { action: 'dismiss', title: 'Dismiss' }
-    ]
+    vibrate: [200, 100, 200]
   });
 }
 
-// Notify client to update task
+// Notify client
 async function notifyClient(taskId, field) {
-  const clients = await self.clients.matchAll();
-  clients.forEach(client => {
-    client.postMessage({
-      type: 'UPDATE_TASK_NOTIFICATION',
-      taskId: taskId,
-      field: field
-    });
+  const allClients = await self.clients.matchAll();
+  allClients.forEach(client => {
+    client.postMessage({ type: 'UPDATE_TASK_NOTIFICATION', taskId, field });
   });
 }
 
-// Handle notification click
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  
-  if (event.action === 'open' || !event.action) {
-    event.waitUntil(
-      self.clients.matchAll({ type: 'window' }).then((clientList) => {
-        // If app is already open, focus it
-        for (const client of clientList) {
-          if (client.url.includes('tasker-app') && 'focus' in client) {
-            return client.focus();
-          }
-        }
-        // Otherwise open new window
-        if (self.clients.openWindow) {
-          return self.clients.openWindow('/tasker-app/');
-        }
-      })
-    );
-  }
-});
-
-// Listen for messages from main app
+// Message listener
 self.addEventListener('message', (event) => {
   if (event.data.type === 'TASKS_UPDATE') {
-    // Tasks have been updated, check notifications
     checkAndNotify();
   }
 });
