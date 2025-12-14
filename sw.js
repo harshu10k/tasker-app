@@ -99,8 +99,8 @@ function showNotification(task, type) {
   
   self.registration.showNotification(title, {
     body: body,
-    icon: '/tasker-app/logo-192.jpeg',
-    badge: '/tasker-app/logo-192.jpeg',
+    icon: '/tasker-app/applogo.jpeg',
+    badge: '/tasker-app/applogo.jpeg',
     tag: tag,
     requireInteraction: type === 'ontime',
     vibrate: [200, 100, 200],
