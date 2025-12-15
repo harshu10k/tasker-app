@@ -11,11 +11,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 20px;
+  padding: 8px 12px;
   margin-bottom: 16px;
   background: linear-gradient(145deg, rgba(138, 43, 226, 0.2) 0%, rgba(100, 20, 180, 0.15) 100%);
   border: 1px solid rgba(138, 43, 226, 0.4);
-  border-radius: 16px;
+  border-radius: 8px;
   backdrop-filter: blur(10px);
   animation: slideDown 0.3s ease-out;
 }
@@ -55,7 +55,7 @@
 .selected-count {
   color: #fff;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .selection-actions {
@@ -73,7 +73,7 @@
   border-radius: 12px;
   color: white;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 11px;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
