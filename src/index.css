@@ -47,13 +47,9 @@ body {
   overflow-x: hidden;
 }
 
-/* Reduce animations on weak devices */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+/* Smooth performance - minimal animations */
+* {
+  animation-duration: 0.1s !important;
 }
 
 a {
