@@ -1,14 +1,19 @@
 .task-card {
-  background: rgba(25, 25, 32, 0.95);
+  background: linear-gradient(145deg, rgba(28, 28, 38, 0.95) 0%, rgba(22, 22, 30, 0.98) 100%);
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 12px;
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  border: 1px solid rgba(138, 43, 226, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(138, 43, 226, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.task-card:active {
+  transform: scale(0.98);
 }
 
 /* Selected state */
@@ -185,68 +190,26 @@
   color: #666;
 }
 
-/* Action Buttons Container */
-.task-action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 10;
-}
-
-.task-edit-btn {
-  background: linear-gradient(145deg, rgba(138, 43, 226, 0.15) 0%, rgba(99, 102, 241, 0.2) 100%);
-  border: none;
-  color: #8b5cf6;
-  cursor: pointer;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 12px;
-  box-shadow: 
-    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
-    0 4px 12px rgba(138, 43, 226, 0.15);
-}
-
-.task-edit-btn:hover {
-  color: white;
-  background: linear-gradient(145deg, rgba(138, 43, 226, 0.9) 0%, rgba(99, 102, 241, 0.95) 100%);
-  transform: scale(1.1);
-  box-shadow: 
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-    0 8px 24px rgba(138, 43, 226, 0.4);
-}
-
+/* Delete Button */
 .task-delete-btn {
-  background: linear-gradient(145deg, rgba(255, 71, 87, 0.1) 0%, rgba(220, 38, 38, 0.15) 100%);
-  border: none;
+  background: rgba(255, 71, 87, 0.1);
+  border: 1px solid rgba(255, 71, 87, 0.2);
   color: #ff6b6b;
   cursor: pointer;
   padding: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-shrink: 0;
   border-radius: 12px;
-  box-shadow: 
-    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
-    0 4px 12px rgba(255, 71, 87, 0.15);
-  position: relative;
-  overflow: hidden;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
-.task-delete-btn:hover {
-  color: white;
-  background: linear-gradient(145deg, rgba(255, 71, 87, 0.9) 0%, rgba(220, 38, 38, 0.95) 100%);
-  transform: scale(1.1);
-  box-shadow: 
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-    0 8px 24px rgba(255, 71, 87, 0.4);
+.task-delete-btn:active {
+  transform: scale(0.9);
+  background: rgba(255, 71, 87, 0.3);
 }
 
 .task-priority {
@@ -420,32 +383,12 @@
     margin-top: 4px;
   }
 
-  .task-action-buttons {
-    flex-direction: row;
-    gap: 6px;
-    top: 12px;
-    right: 12px;
-  }
-
-  .task-edit-btn {
-    padding: 10px;
-    border-radius: 10px;
-    background: linear-gradient(145deg, rgba(40, 40, 50, 0.95) 0%, rgba(30, 30, 40, 0.98) 100%);
-    border: 1px solid rgba(138, 43, 226, 0.3);
-  }
-
-  .task-edit-btn:active {
-    transform: scale(0.9);
-  }
-
   .task-delete-btn {
     padding: 10px;
     border-radius: 10px;
-    position: relative;
-    top: auto;
-    right: auto;
-    background: linear-gradient(145deg, rgba(40, 40, 50, 0.95) 0%, rgba(30, 30, 40, 0.98) 100%);
-    border: 1px solid rgba(255, 71, 87, 0.3);
+    position: absolute;
+    top: 10px;
+    right: 10px;
   }
 
   .task-delete-btn:active {

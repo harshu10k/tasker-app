@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { CheckCircle, Circle, Trash2, Download, Pencil } from 'lucide-react';
+import React from 'react';
+import { CheckCircle, Circle, Trash2, Download } from 'lucide-react';
 import type { Task } from '../types';
 import { updateTask, deleteTask } from '../utils/storage';
 import { formatDistanceToNow } from 'date-fns';
-import { EditTaskModal } from './EditTaskModal';
 import '../styles/TaskCard.css';
 
 interface TaskCardProps {
@@ -13,7 +12,6 @@ interface TaskCardProps {
 }
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task, categories, onTaskUpdated }) => {
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const category = categories.find(c => c.id === task.category);
   
   const priorityColors = {
@@ -32,10 +30,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, categories, onTaskUpda
       deleteTask(task.id);
       onTaskUpdated();
     }
-  };
-
-  const handleEdit = () => {
-    setIsEditOpen(true);
   };
 
   const downloadAttachment = (attachment: any) => {
@@ -136,30 +130,13 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, categories, onTaskUpda
         </div>
       </div>
 
-      <div className="task-action-buttons">
-        <button
-          className="task-edit-btn"
-          onClick={handleEdit}
-          title="Edit task"
-        >
-          <Pencil size={16} />
-        </button>
-        <button
-          className="task-delete-btn"
-          onClick={handleDelete}
-          title="Delete task"
-        >
-          <Trash2 size={16} />
-        </button>
-      </div>
-
-      <EditTaskModal
-        task={task}
-        categories={categories}
-        isOpen={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
-        onTaskUpdated={onTaskUpdated}
-      />
+      <button
+        className="task-delete-btn"
+        onClick={handleDelete}
+        title="Delete task"
+      >
+        <Trash2 size={18} />
+      </button>
     </div>
   );
 };
